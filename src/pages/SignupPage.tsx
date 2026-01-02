@@ -20,16 +20,6 @@ const SignupPage = () => {
     });
 
     const redirectUri = searchParams.get('redirect_uri') || '';
-    const service = searchParams.get('service') || 'tender';
-
-    const getServiceName = () => {
-        const services: Record<string, string> = {
-            tender: t('services.tender'),
-            jobs: t('services.jobs'),
-            news: t('services.news'),
-        };
-        return services[service] || service;
-    };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });

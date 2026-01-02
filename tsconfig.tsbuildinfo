@@ -1,0 +1,1 @@
+{"root":["./src/App.tsx","./src/i18n.ts","./src/main.tsx","./src/vite-env.d.ts","./src/components/LanguageSwitcher.tsx","./src/locales/am.ts","./src/locales/en.ts","./src/pages/LoginPage.tsx","./src/pages/SignupPage.tsx"],"version":"5.9.3"}
