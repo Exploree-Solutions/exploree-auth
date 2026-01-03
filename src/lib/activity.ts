@@ -20,7 +20,7 @@ export async function logActivity(params: LogActivityParams) {
                 description: params.description,
                 ipAddress: params.ipAddress || null,
                 userAgent: params.userAgent || null,
-                metadata: params.metadata || null,
+                metadata: params.metadata ?? undefined,
             },
         });
     } catch (error) {
