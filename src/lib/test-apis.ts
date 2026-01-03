@@ -51,8 +51,10 @@ async function test() {
             'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
-            bio: 'I am a verified user updated via API.',
-            avatar: 'https://example.com/avatar.png'
+            fullName: 'Updated Name',
+            phoneNumber: '+1234567890',
+            company: 'Exploree Solutions',
+            password: 'newpassword123'
         })
     });
     console.log('Update Profile Result:', await updateRes.json());

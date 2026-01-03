@@ -44,6 +44,9 @@ export async function POST(request: Request) {
             await tx.masterProfile.create({
                 data: {
                     userId: newUser.id,
+                    fullName: name,
+                    email: email,
+                    phoneNumber: '', // Initialize empty, can be updated later
                 },
             });
 

@@ -1,9 +1,10 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import prisma from '@/lib/prisma';
-import { signToken, setTokenCookie } from '@/lib/auth';
+import { signToken } from '@/lib/auth';
+import { logActivity, getClientInfo } from '@/lib/activity';
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
     try {
         const { email, password } = await request.json();
 
@@ -26,6 +27,21 @@ export async function POST(request: Request) {
             );
         }
 
+        // Check user status
+        if (user.status === 'SUSPENDED') {
+            return NextResponse.json(
+                { error: 'Your account has been suspended. Please contact support.' },
+                { status: 403 }
+            );
+        }
+
+        if (user.status === 'INACTIVE') {
+            return NextResponse.json(
+                { error: 'Your account is inactive. Please contact support to reactivate.' },
+                { status: 403 }
+            );
+        }
+
         // Check password
         const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
 
@@ -36,6 +52,21 @@ export async function POST(request: Request) {
             );
         }
 
+        // Update last login time
+        await prisma.user.update({
+            where: { id: user.id },
+            data: { lastLoginAt: new Date() },
+        });
+
+        // Log activity
+        const clientInfo = getClientInfo(request);
+        await logActivity({
+            userId: user.id,
+            type: 'LOGIN',
+            description: 'User logged in',
+            ...clientInfo,
+        });
+
         // Sign JWT
         const token = await signToken({
             sub: user.id,
@@ -44,7 +75,6 @@ export async function POST(request: Request) {
             role: user.role as 'SYSTEM_ADMIN' | 'USER',
         });
 
-        // Return token for local storage storage
         return NextResponse.json({
             success: true,
             user: {
@@ -52,10 +82,13 @@ export async function POST(request: Request) {
                 name: user.name,
                 email: user.email,
                 role: user.role,
+                status: user.status,
+                forcePasswordReset: user.forcePasswordReset,
             },
-            token // Return token as well
+            token,
         });
-    } catch {
+    } catch (error) {
+        console.error('Login error:', error);
         return NextResponse.json(
             { error: 'Internal server error' },
             { status: 500 }

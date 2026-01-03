@@ -80,7 +80,7 @@ export async function removeTokenCookie() {
  */
 export function isAuthorizedService(request: Request | { headers: Headers }) {
     const apiKey = request.headers.get('X-Exploree-Service-Key');
-    const systemKey = process.env.SERVICE_API_KEY;
+    const systemKey = process.env.NEXT_PUBLIC_SERVICE_KEY;
 
     if (!systemKey || !apiKey) return false;
     return apiKey === systemKey;
