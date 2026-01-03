@@ -1,4 +1,5 @@
 import prisma from './prisma';
+import { Prisma } from '@prisma/client';
 
 type ActivityType = 'LOGIN' | 'LOGOUT' | 'REGISTER' | 'PASSWORD_CHANGE' | 'PROFILE_UPDATE' | 'ADMIN_ACTION';
 
@@ -20,7 +21,7 @@ export async function logActivity(params: LogActivityParams) {
                 description: params.description,
                 ipAddress: params.ipAddress || null,
                 userAgent: params.userAgent || null,
-                metadata: params.metadata ?? undefined,
+                metadata: params.metadata as Prisma.InputJsonValue | undefined,
             },
         });
     } catch (error) {
