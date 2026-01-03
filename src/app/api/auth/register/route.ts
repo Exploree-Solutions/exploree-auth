@@ -58,9 +58,7 @@ export async function POST(request: Request) {
             role: user.role as 'SYSTEM_ADMIN' | 'USER',
         });
 
-        // Set cookie
-        await setTokenCookie(token);
-
+        // Return token for local storage storage
         return NextResponse.json({
             success: true,
             user: {

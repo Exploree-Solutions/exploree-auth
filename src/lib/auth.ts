@@ -47,6 +47,28 @@ export async function getToken() {
     return cookieStore.get('token')?.value;
 }
 
+/**
+ * Extracts the JWT from either the Authorization header (Bearer) or cookies.
+ * Prioritizes the Authorization header for local storage compatibility.
+ */
+export async function getTokenFromRequest(request?: Request | { headers: Headers }) {
+    // 1. Check Authorization Header
+    if (request) {
+        const authHeader = request.headers.get('Authorization');
+        if (authHeader?.startsWith('Bearer ')) {
+            return authHeader.substring(7);
+        }
+    }
+
+    // 2. Fallback to Cookies (for backward compatibility/SSR)
+    try {
+        const cookieStore = await cookies();
+        return cookieStore.get('token')?.value;
+    } catch {
+        return undefined;
+    }
+}
+
 export async function removeTokenCookie() {
     const cookieStore = await cookies();
     cookieStore.delete('token');
