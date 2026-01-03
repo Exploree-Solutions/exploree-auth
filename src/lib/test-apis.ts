@@ -48,7 +48,7 @@ async function test() {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json',
-            'Cookie': `token=${token}`
+            'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
             bio: 'I am a verified user updated via API.',
@@ -61,7 +61,7 @@ async function test() {
     console.log('\n[5] Getting profile...');
     const getProfileRes = await fetch(`${BASE_URL}/profile`, {
         method: 'GET',
-        headers: { 'Cookie': `token=${token}` }
+        headers: { 'Authorization': `Bearer ${token}` }
     });
     console.log('Get Profile Result:', await getProfileRes.json());
 }
