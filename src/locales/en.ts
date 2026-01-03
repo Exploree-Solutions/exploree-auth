@@ -40,11 +40,23 @@ export const en = {
         services: {
             tender: 'Exploree Tender',
             jobs: 'Exploree Jobs',
-            news: 'Exploree News',
+            events: 'Exploree Events',
+            opportunities: 'Exploree Opportunities',
+            tenderDesc: 'Business opportunities & tenders',
+            jobsDesc: 'Find your dream career',
+            eventsDesc: 'Conferences & community gatherings',
+            opportunitiesDesc: 'Grants, scholarships & more',
+        },
+        selection: {
+            title: 'Where would you like to go?',
+            subtitle: 'Select a service to continue with your Exploree account',
+            continueTo: 'Continue to',
         },
         language: {
             english: 'English',
             amharic: 'አማርኛ',
+            oromifa: 'Afaan Oromoo',
+            tigrinya: 'ትግርኛ',
         },
     },
 };

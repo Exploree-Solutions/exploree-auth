@@ -38,13 +38,25 @@ export const am = {
             creatingAccount: 'መለያ በመፍጠር ላይ...',
         },
         services: {
-            tender: 'Exploree ጨረታ',
-            jobs: 'Exploree ስራዎች',
-            news: 'Exploree ዜና',
+            tender: 'ኤክስፕሎሪ ጨረታ',
+            jobs: 'ኤክስፕሎሪ ስራዎች',
+            events: 'ኤክስፕሎሪ ኩነቶች',
+            opportunities: 'ኤክስፕሎሪ እድሎች',
+            tenderDesc: 'የንግድ እድሎች እና ጨረታዎች',
+            jobsDesc: 'የህልምዎን ስራ ያግኙ',
+            eventsDesc: 'ስብሰባዎች እና የማህበረሰብ ሰብሰባዎች',
+            opportunitiesDesc: 'እርዳታዎች፣ የትምህርት እድሎች እና ተጨማሪ',
+        },
+        selection: {
+            title: 'የት መሄድ ይፈልጋሉ?',
+            subtitle: 'በኤክስፕሎሪ መለያዎ ለመቀጠል አገልግሎት ይምረጡ',
+            continueTo: 'ቀጥል ወደ',
         },
         language: {
             english: 'English',
             amharic: 'አማርኛ',
+            oromifa: 'Afaan Oromoo',
+            tigrinya: 'ትግርኛ',
         },
     },
 };
