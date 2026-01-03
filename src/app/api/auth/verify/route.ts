@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { verifyToken } from '@/lib/auth';
+import { verifyToken, isAuthorizedService } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 
 /**
@@ -10,12 +10,29 @@ import prisma from '@/lib/prisma';
  * 
  * Or: GET /api/auth/verify?token=eyJhbG...
  * 
+ * Headers for Service-to-Service:
+ * X-Exploree-Service-Key: YOUR_SHARED_KEY
+ * 
  * Returns: { valid: true, user: { id, name, email, role } }
  * Or: { valid: false, error: "..." }
  */
 
 export async function POST(request: NextRequest) {
     try {
+        // Check for Service-to-Service API Key first
+        if (isAuthorizedService(request)) {
+            const body = await request.json().catch(() => ({}));
+            const { token } = body;
+
+            // If API key is present, we still usually want to verify a specific token
+            // but we might also allow general "service is authorized" check
+            if (token) {
+                return await verifyAndReturnUser(token);
+            }
+
+            return NextResponse.json({ valid: true, service: true });
+        }
+
         const body = await request.json();
         const { token } = body;
 
@@ -37,6 +54,14 @@ export async function POST(request: NextRequest) {
 }
 
 export async function GET(request: NextRequest) {
+    // Check for Service-to-Service API Key
+    if (isAuthorizedService(request)) {
+        const { searchParams } = new URL(request.url);
+        const token = searchParams.get('token');
+        if (token) return await verifyAndReturnUser(token);
+        return NextResponse.json({ valid: true, service: true });
+    }
+
     const { searchParams } = new URL(request.url);
     const token = searchParams.get('token');
 

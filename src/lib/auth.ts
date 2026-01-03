@@ -51,3 +51,15 @@ export async function removeTokenCookie() {
     const cookieStore = await cookies();
     cookieStore.delete('token');
 }
+
+/**
+ * Validates if the request comes from an authorized microservice
+ * using a shared service API key.
+ */
+export function isAuthorizedService(request: Request | { headers: Headers }) {
+    const apiKey = request.headers.get('X-Exploree-Service-Key');
+    const systemKey = process.env.SERVICE_API_KEY;
+
+    if (!systemKey || !apiKey) return false;
+    return apiKey === systemKey;
+}
