@@ -93,6 +93,9 @@ export async function PATCH(request: NextRequest) {
         return NextResponse.json({ success: true, user: userWithoutPassword });
     } catch (error) {
         console.error('Profile update error:', error);
-        return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+        return NextResponse.json({
+            error: 'Internal server error',
+            details: error instanceof Error ? error.message : String(error)
+        }, { status: 500 });
     }
 }
