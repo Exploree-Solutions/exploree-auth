@@ -7,6 +7,7 @@ import { Mail, Lock, Eye, EyeOff, ArrowRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import { storeToken, getStoredToken } from '@/lib/tokenStorage';
+import { authApi } from '@/lib/api';
 
 function LoginContent() {
     const { t } = useTranslation();
@@ -51,17 +52,7 @@ function LoginContent() {
         setIsLoading(true);
 
         try {
-            const response = await fetch('/api/auth/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password }),
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.error || t('login.invalidCredentials'));
-            }
+            const data = await authApi.login(email, password);
 
             // Store token in localStorage for persistence
             storeToken(data.token);

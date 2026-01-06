@@ -5,7 +5,8 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Briefcase, Gavel, Calendar, Sparkles, LogOut, User, ArrowRight, Bell, X, Check } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
-import { clearToken } from '@/lib/tokenStorage';
+import { clearToken, getStoredToken } from '@/lib/tokenStorage';
+import { authApi, waitlistApi } from '@/lib/api';
 
 // Service configuration - URL can be null for coming soon services
 const services = [
@@ -77,10 +78,23 @@ function ServiceSelectionContent() {
 
     useEffect(() => {
         const fetchUser = async () => {
+            const storedToken = getStoredToken();
+            if (!storedToken && !token) {
+                router.push('/login');
+                setLoading(false);
+                return;
+            }
+
+            const authToken = storedToken || token;
+            if (!authToken) {
+                router.push('/login');
+                setLoading(false);
+                return;
+            }
+
             try {
-                const res = await fetch('/api/auth/me');
-                const data = await res.json();
-                if (data.authenticated) {
+                const data = await authApi.me(authToken);
+                if (data.authenticated && data.user) {
                     setUser(data.user);
                 } else {
                     router.push('/login');
@@ -92,7 +106,7 @@ function ServiceSelectionContent() {
             }
         };
         fetchUser();
-    }, [router]);
+    }, [router, token]);
 
     const handleSelectService = (service: Service) => {
         if (service.url) {
@@ -119,33 +133,26 @@ function ServiceSelectionContent() {
         setWaitlistError('');
 
         try {
-            const res = await fetch('/api/waitlist', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    email: user.email,
-                    name: user.name,
-                    service: selectedService.id,
-                }),
+            const data = await waitlistApi.join({
+                email: user.email,
+                name: user.name,
+                service: selectedService.id as 'jobs' | 'tender' | 'events' | 'opportunities',
             });
 
-            const data = await res.json();
-
-            if (res.ok) {
+            if (data.alreadyExists || data.id) {
                 setWaitlistSuccess(true);
-            } else {
-                setWaitlistError(data.error || 'Failed to join waitlist');
             }
-        } catch {
-            setWaitlistError('Something went wrong. Please try again.');
+        } catch (err) {
+            setWaitlistError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
         } finally {
             setWaitlistLoading(false);
         }
     };
 
     const handleLogout = async () => {
+        const storedToken = getStoredToken();
         clearToken();
-        await fetch('/api/auth/login', { method: 'DELETE' });
+        await authApi.logout(storedToken || undefined);
         router.push('/login');
     };
 

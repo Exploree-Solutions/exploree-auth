@@ -7,6 +7,7 @@ import { Mail, Lock, Eye, EyeOff, User, Phone, ArrowRight, Check } from 'lucide-
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import { storeToken, getStoredToken } from '@/lib/tokenStorage';
+import { authApi } from '@/lib/api';
 
 function SignupContent() {
     const { t } = useTranslation();
@@ -56,21 +57,12 @@ function SignupContent() {
         setIsLoading(true);
 
         try {
-            const response = await fetch('/api/auth/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    name: formData.name,
-                    email: formData.email,
-                    password: formData.password,
-                }),
+            const data = await authApi.register({
+                name: formData.name,
+                email: formData.email,
+                password: formData.password,
+                phoneNumber: formData.phone || undefined,
             });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.error || t('signup.error'));
-            }
 
             // Store token in localStorage for persistence
             storeToken(data.token);

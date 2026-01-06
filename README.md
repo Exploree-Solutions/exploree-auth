@@ -1,36 +1,105 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Exploree Auth Frontend
+
+Modern authentication frontend for Exploree services. This is a **frontend-only** Next.js application that communicates with a separate Go backend API.
+
+## Tech Stack
+
+- **Next.js 16** with App Router
+- **React 19**
+- **Tailwind CSS 4**
+- **i18next** for internationalization (English, Amharic, Oromifa, Tigrigna)
+
+## Features
+
+- 🔐 User login and registration
+- 🌍 Multi-language support
+- 📋 Service selection (Jobs, Tender, Events, Opportunities)
+- 📬 Coming Soon waitlist for unreleased services
+- 🔄 Token-based authentication
+- 📱 Responsive design
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- Node.js 20+
+- A running Go backend (see [GO_BACKEND_API_SPEC.md](./GO_BACKEND_API_SPEC.md))
+
+### Environment Variables
+
+Create a `.env.local` file:
+
+```env
+# Go Backend API URL (required)
+NEXT_PUBLIC_API_URL=http://localhost:8080
+
+# Service URLs for redirection (optional)
+NEXT_PUBLIC_JOBS_URL=
+NEXT_PUBLIC_TENDER_URL=
+NEXT_PUBLIC_EVENTS_URL=
+NEXT_PUBLIC_OPPORTUNITIES_URL=
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Installation
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm install
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Visit [http://localhost:3000](http://localhost:3000)
 
-## Learn More
+### Build for Production
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+npm run build
+npm start
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Project Structure
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+src/
+├── app/                    # Next.js App Router pages
+│   ├── login/             # Login page
+│   ├── signup/            # Registration page
+│   └── select-service/    # Service selection page
+├── components/            # Reusable UI components
+├── lib/
+│   ├── api.ts            # Centralized API client for Go backend
+│   └── tokenStorage.ts   # Client-side token management
+└── locales/              # Translation files
+```
 
-## Deploy on Vercel
+## Backend Integration
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+This frontend expects a Go backend implementing the endpoints specified in [GO_BACKEND_API_SPEC.md](./GO_BACKEND_API_SPEC.md).
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Required Endpoints
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/auth/register` | POST | User registration |
+| `/api/auth/login` | POST | User login |
+| `/api/auth/login` | DELETE | Logout |
+| `/api/auth/me` | GET | Get current user |
+| `/api/waitlist` | POST | Join waitlist |
+
+## Deployment
+
+This app can be deployed as a static site or with SSR on:
+- **Vercel** (recommended for Next.js)
+- **Netlify**
+- **Any Node.js hosting**
+
+### Netlify Configuration
+
+```toml
+[build]
+  command = "npm run build"
+  publish = ".next"
+```
+
+## License
+
+Proprietary - Exploree Solutions © 2026
